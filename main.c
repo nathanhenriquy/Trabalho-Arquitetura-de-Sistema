@@ -4,6 +4,11 @@
 struct Mips{
     
     int opcode;    
+    int rs;
+    int rt;
+    int rd;
+    int shamt;
+    int funct;
 } ;
 
 int main()
