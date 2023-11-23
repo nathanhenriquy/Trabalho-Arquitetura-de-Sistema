@@ -15,6 +15,9 @@ struct instrucoes{
 int main()
 {
     int pc = 0;
+    int registradores[32] = {0}; // Registradores
+    int memoria[1024] = {0}; // Memória 
+
 
     return 0;
 }
