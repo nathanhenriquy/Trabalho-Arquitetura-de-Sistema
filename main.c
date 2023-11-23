@@ -9,6 +9,7 @@ struct instrucoes{
     int rd;
     int shamt;
     int funct;
+    int offset
 } ;
 
 int main()
