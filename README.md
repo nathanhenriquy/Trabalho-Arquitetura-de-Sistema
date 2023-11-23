@@ -8,4 +8,4 @@ Um vídeo (ou link) contendo uma explicação detalhada do projeto desenvolvido,
 
 <br>
 Nathan - conectado<br>
-Paulo - 
+Paulo - conectado<br>
