@@ -19,6 +19,7 @@ struct MipsI
     int rs;
     int rt;
     int endereco;
+    int offset;
 };
 
 struct MipsJ
@@ -35,7 +36,7 @@ void imprimirEstado() // aqui coloca oq vai dar print antes de pedir cada instru
     printf("PC: %d\n", pc);
 }
 
-void processarInstrucao(struct MipsR *r)
+void processarInstrucao(struct MipsR *r, struct MipsI *i)
 {
 
     printf("Opcode: %s\n", r->opcode);
@@ -54,7 +55,15 @@ void processarInstrucao(struct MipsR *r)
     {
         registradores[r->rd] = registradores[r->rs] - registradores[r->rt];
     }
-    
+    else if (strcmp(r->opcode, "lw") == 0)
+    {
+        registradores[r->rt] = registradores[r->rs] + i->endereco;
+    }
+    else if (strcmp(r->opcode, "sw") == 0)
+    {
+        registradores[r->rt] = registradores[r->rs] + i->endereco;
+    }
+
     pc += 4;
 }
 
@@ -73,10 +82,22 @@ int main()
         printf("Digite a instrucao MIPS (por exemplo, ADD $s1, $s2, $s3): ");
         scanf("%s $%d , $%d , $%d", r.opcode, &r.rs, &r.rt, &r.rd);
 
-        processarInstrucao(&r);
+        if (strcmp(r.opcode, "add") == 0 || strcmp(r.opcode, "sub") == 0)
+        {
+            scanf("$%d , $%d , $%d", &r.rs, &r.rt, &r.rd);
+        }
+        else if (strcmp(r.opcode, "lw") == 0)
+        {
+            scanf("$%d , %d($%d)", &r.rt, &i.endereco, &r.rs);
+        }
+        else if (strcmp(r.opcode, "sw") == 0)
+        {
+            scanf("$%d , %d($%d)", &r.rt, &i.offset, &r.rs);
+        }
 
-        while (getchar() != '\n')
-            ;
+        processarInstrucao(&r, &i);
+
+        while (getchar() != '\n');
 
         printf("Deseja adicionar mais instrucoes? (s para sim, qualquer outra tecla para sair): ");
         scanf(" %c", &escolha);
