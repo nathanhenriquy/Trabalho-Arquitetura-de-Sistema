@@ -51,7 +51,6 @@ void processarInstrucao(struct MipsR *r, struct MipsI *i)
     if (strcmp(r->opcode, "add") == 0)
     {
         registradores[r->rd] = registradores[r->rs] + registradores[r->rt];
-
     }
     else if (strcmp(r->opcode, "sub") == 0)
     {
@@ -75,8 +74,14 @@ int main()
     struct MipsI i;
     struct MipsJ j;
 
+    int cont;
     char escolha;
     char instrucao[100];
+
+    for(cont = 0; cont < strlen(registradores); cont++)
+    {
+        registradores[cont] = 0;
+    }
 
     do
     {
@@ -89,9 +94,14 @@ int main()
         {
             if (strcmp(r.opcode, "add") == 0 || strcmp(r.opcode, "sub") == 0)
             {
-                scanf("$%d, $%d, $%d", &r.rs, &r.rt, &r.rd);
+                scanf("$s%d, $s%d, $s%d", &r.rs, &r.rt, &r.rd);
             }
-            else if (strcmp(r.opcode, "lw") == 0)
+            
+            processarInstrucao(&r, &i);
+        }
+        else if (sscanf(instrucao, "%s $s%d, %d", r.opcode, &i.rd, &i.rs) == 3)
+        {
+            if (strcmp(r.opcode, "lw") == 0)
             {
                 scanf("$%d, %d($%d)", &r.rt, &i.endereco, &r.rs);
             }
@@ -103,6 +113,7 @@ int main()
             {
                 scanf("$%d, $%d, %d", &i.rd, &i.rs, &i.endereco);
             }
+            
             processarInstrucao(&r, &i);
         }
         else
