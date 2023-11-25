@@ -61,7 +61,7 @@ void processarInstrucao(struct MipsR *r, struct MipsI *i)
     }
     else if (strcmp(r->opcode, "sw") == 0)
     {
-        registradores[r->rt] = registradores[r->rs] + i->endereco;
+        registradores[r->rt] = registradores[r->rs] + i->offset;
     }
 
     pc += 4;
