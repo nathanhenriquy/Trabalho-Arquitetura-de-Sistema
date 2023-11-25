@@ -16,8 +16,8 @@ struct MipsR
 struct MipsI
 {
     char opcode[10];
+    int rd;
     int rs;
-    int rt;
     int endereco;
     int offset;
 };
@@ -29,6 +29,7 @@ struct MipsJ
 };
 
 int registradores[32];
+
 int pc = 0;
 
 void imprimirEstado() // aqui coloca oq vai dar print antes de pedir cada instrução
@@ -73,29 +74,54 @@ int main()
     struct MipsI i;
     struct MipsJ j;
 
+    int cont;
     char escolha;
+    char instrucao[100];
+
+    for(cont = 0; cont < strlen(registradores); cont++)
+    {
+        registradores[cont] = 0;
+    }
 
     do
     {
         imprimirEstado();
 
         printf("Digite a instrucao MIPS (por exemplo, ADD $s1, $s2, $s3): ");
-        scanf("%s $%d , $%d , $%d", r.opcode, &r.rs, &r.rt, &r.rd);
+        fgets(instrucao, sizeof(instrucao), stdin);
 
-        if (strcmp(r.opcode, "add") == 0 || strcmp(r.opcode, "sub") == 0)
+        if (sscanf(instrucao, "%s $s%d, $s%d, $s%d", r.opcode, &r.rs, &r.rt, &r.rd) == 4)
         {
-            scanf("$%d , $%d , $%d", &r.rs, &r.rt, &r.rd);
+            if (strcmp(r.opcode, "add") == 0 || strcmp(r.opcode, "sub") == 0)
+            {
+                scanf("$s%d, $s%d, $s%d", &r.rs, &r.rt, &r.rd);
+            }
+            
+            processarInstrucao(&r, &i);
         }
-        else if (strcmp(r.opcode, "lw") == 0)
+        else if (sscanf(instrucao, "%s $s%d, %d", r.opcode, &i.rd, &i.rs) == 3)
         {
-            scanf("$%d , %d($%d)", &r.rt, &i.endereco, &r.rs);
+            if (strcmp(r.opcode, "lw") == 0)
+            {
+                scanf("$%d, %d($%d)", &r.rt, &i.endereco, &r.rs);
+            }
+            else if (strcmp(r.opcode, "sw") == 0)
+            {
+                scanf("$%d, %d($%d)", &r.rt, &i.offset, &r.rs);
+            }
+            else if (strcmp(i.opcode, "addi") == 0)
+            {
+                scanf("$%d, $%d, %d", &i.rd, &i.rs, &i.endereco);
+            }
+            
+            processarInstrucao(&r, &i);
         }
-        else if (strcmp(r.opcode, "sw") == 0)
+        else
         {
-            scanf("$%d , %d($%d)", &r.rt, &i.offset, &r.rs);
+            printf("Erro ao ler a instrucao. Certifique-se de que a entrada está correta.\n");
         }
 
-        processarInstrucao(&r, &i);
+        
 
         while (getchar() != '\n');
 
