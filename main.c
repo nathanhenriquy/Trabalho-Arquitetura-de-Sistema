@@ -14,6 +14,7 @@ struct Mips
 };
 
 int registradores[32];
+int pc = 0;
 
 void processarInstrucao(struct Mips *instrucao)
 {
@@ -34,6 +35,8 @@ void processarInstrucao(struct Mips *instrucao)
     {
 
     }
+
+    pc += 4;
 }
 
 int main()
@@ -57,6 +60,8 @@ int main()
         scanf(" %c", &escolha);
 
     } while (escolha == 's' || escolha == 'S');
+
+    printf("PC final: %d\n", pc);
 
     return 0;
 }
