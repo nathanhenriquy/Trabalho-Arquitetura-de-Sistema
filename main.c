@@ -16,6 +16,11 @@ struct Mips
 int registradores[32];
 int pc = 0;
 
+void imprimirEstado() // aqui coloca oq vai dar print antes de pedir cada instrução
+{
+    printf("PC: %d\n", pc);
+}
+
 void processarInstrucao(struct Mips *instrucao)
 {
 
@@ -29,13 +34,13 @@ void processarInstrucao(struct Mips *instrucao)
 
     if (strcmp(instrucao->opcode, "add") == 0)
     {
-        
+        registradores[instrucao->rd] = registradores[instrucao->rs] + registradores[instrucao->rt];
     }
     else if (strcmp(instrucao->opcode, "sub") == 0)
     {
-
+        registradores[instrucao->rd] = registradores[instrucao->rs] - registradores[instrucao->rt];
     }
-
+    
     pc += 4;
 }
 
@@ -47,6 +52,7 @@ int main()
 
     do
     {
+        imprimirEstado();
 
         printf("Digite a instrucao MIPS (por exemplo, ADD $s1, $s2, $s3): ");
         scanf("%s $%d , $%d , $%d", instrucao.opcode, &instrucao.rs, &instrucao.rt, &instrucao.rd);
@@ -61,7 +67,7 @@ int main()
 
     } while (escolha == 's' || escolha == 'S');
 
-    printf("PC final: %d\n", pc);
+    imprimirEstado();
 
     return 0;
 }
