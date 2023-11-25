@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct Mips
+struct MipsR
 {
     char opcode[10];
     int rs;
@@ -13,6 +13,20 @@ struct Mips
     int offset;
 };
 
+struct MipsI
+{
+    char opcode[10];
+    int rs;
+    int rt;
+    int endereco;
+};
+
+struct MipsJ
+{
+    char opcode[10];
+    int endereco;
+};
+
 int registradores[32];
 int pc = 0;
 
@@ -21,24 +35,24 @@ void imprimirEstado() // aqui coloca oq vai dar print antes de pedir cada instru
     printf("PC: %d\n", pc);
 }
 
-void processarInstrucao(struct Mips *instrucao)
+void processarInstrucao(struct MipsR *r)
 {
 
-    printf("Opcode: %s\n", instrucao->opcode);
-    printf("rs: %d\n", instrucao->rs);
-    printf("rt: %d\n", instrucao->rt);
-    printf("rd: %d\n", instrucao->rd);
-    printf("shamt: %d\n", instrucao->shift);
-    printf("funct: %d\n", instrucao->funct);
-    printf("offset: %d\n", instrucao->offset);
+    printf("Opcode: %s\n", r->opcode);
+    printf("rs: %d\n", r->rs);
+    printf("rt: %d\n", r->rt);
+    printf("rd: %d\n", r->rd);
+    printf("shamt: %d\n", r->shift);
+    printf("funct: %d\n", r->funct);
+    printf("offset: %d\n", r->offset);
 
-    if (strcmp(instrucao->opcode, "add") == 0)
+    if (strcmp(r->opcode, "add") == 0)
     {
-        registradores[instrucao->rd] = registradores[instrucao->rs] + registradores[instrucao->rt];
+        registradores[r->rd] = registradores[r->rs] + registradores[r->rt];
     }
-    else if (strcmp(instrucao->opcode, "sub") == 0)
+    else if (strcmp(r->opcode, "sub") == 0)
     {
-        registradores[instrucao->rd] = registradores[instrucao->rs] - registradores[instrucao->rt];
+        registradores[r->rd] = registradores[r->rs] - registradores[r->rt];
     }
     
     pc += 4;
@@ -46,7 +60,9 @@ void processarInstrucao(struct Mips *instrucao)
 
 int main()
 {
-    struct Mips instrucao;
+    struct MipsR r;
+    struct MipsI i;
+    struct MipsJ j;
 
     char escolha;
 
@@ -55,9 +71,9 @@ int main()
         imprimirEstado();
 
         printf("Digite a instrucao MIPS (por exemplo, ADD $s1, $s2, $s3): ");
-        scanf("%s $%d , $%d , $%d", instrucao.opcode, &instrucao.rs, &instrucao.rt, &instrucao.rd);
+        scanf("%s $%d , $%d , $%d", r.opcode, &r.rs, &r.rt, &r.rd);
 
-        processarInstrucao(&instrucao);
+        processarInstrucao(&r);
 
         while (getchar() != '\n')
             ;
