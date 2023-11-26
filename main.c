@@ -37,7 +37,7 @@ void imprimirEstado() // aqui coloca oq vai dar print antes de pedir cada instru
     printf("PC: %d\n", pc);
 }
 
-void processarInstrucao(struct MipsR *r, struct MipsI *i)
+void processarInstrucao(struct MipsR *r, struct MipsI *i, struct MipsJ *j)
 {
 
     printf("Opcode: %s\n", r->opcode);
@@ -64,6 +64,10 @@ void processarInstrucao(struct MipsR *r, struct MipsI *i)
     {
         registradores[r->rt] = registradores[r->rs] + i->offset;
     }
+    else if (strcmp(j->opcode, "j") == 0)
+    {
+        pc = j->endereco;
+    }
 
     pc += 4;
 }
@@ -78,7 +82,7 @@ int main()
     char escolha;
     char instrucao[100];
 
-    for(cont = 0; cont < strlen(registradores); cont++)
+    for (cont = 0; cont < 32; cont++)
     {
         registradores[cont] = 0;
     }
@@ -92,36 +96,20 @@ int main()
 
         if (sscanf(instrucao, "%s $s%d, $s%d, $s%d", r.opcode, &r.rs, &r.rt, &r.rd) == 4)
         {
-            if (strcmp(r.opcode, "add") == 0 || strcmp(r.opcode, "sub") == 0)
-            {
-                scanf("$s%d, $s%d, $s%d", &r.rs, &r.rt, &r.rd);
-            }
-            
-            processarInstrucao(&r, &i);
+            processarInstrucao(&r, &i, &j);
         }
-        else if (sscanf(instrucao, "%s $s%d, %d", r.opcode, &i.rd, &i.rs) == 3)
+        else if (sscanf(instrucao, "%s $s%d, %d", r.opcode, &i.rd, &i.endereco) == 3)
         {
-            if (strcmp(r.opcode, "lw") == 0)
-            {
-                scanf("$%d, %d($%d)", &r.rt, &i.endereco, &r.rs);
-            }
-            else if (strcmp(r.opcode, "sw") == 0)
-            {
-                scanf("$%d, %d($%d)", &r.rt, &i.offset, &r.rs);
-            }
-            else if (strcmp(i.opcode, "addi") == 0)
-            {
-                scanf("$%d, $%d, %d", &i.rd, &i.rs, &i.endereco);
-            }
-            
-            processarInstrucao(&r, &i);
+            processarInstrucao(&r, &i, &j);
+        }
+        else if (sscanf(instrucao, "%s %d", j.opcode, &j.endereco) == 2)
+        {
+            processarInstrucao(&r, &i, &j);
         }
         else
         {
             printf("Erro ao ler a instrucao. Certifique-se de que a entrada está correta.\n");
         }
-
-        
 
         while (getchar() != '\n');
 
