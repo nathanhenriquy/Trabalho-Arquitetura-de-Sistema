@@ -29,17 +29,15 @@ struct MipsJ
 };
 
 int registradores[32];
-
 int pc = 0;
 
-void imprimirEstado() // aqui coloca oq vai dar print antes de pedir cada instrução
+void imprimirEstado()
 {
     printf("PC: %d\n", pc);
 }
 
 void processarInstrucao(struct MipsR *r, struct MipsI *i, struct MipsJ *j)
 {
-
     printf("Opcode: %s\n", r->opcode);
     printf("rs: %d\n", r->rs);
     printf("rt: %d\n", r->rt);
@@ -62,11 +60,12 @@ void processarInstrucao(struct MipsR *r, struct MipsI *i, struct MipsJ *j)
     }
     else if (strcmp(r->opcode, "sw") == 0)
     {
-        registradores[r->rt] = registradores[r->rs] + i->offset;
+        registradores[registradores[r->rs] + i->offset] = registradores[r->rt];
     }
     else if (strcmp(j->opcode, "j") == 0)
     {
         pc = j->endereco;
+        return; 
     }
 
     pc += 4;
