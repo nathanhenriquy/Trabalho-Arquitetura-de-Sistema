@@ -29,11 +29,21 @@ struct MipsJ
 };
 
 int registradores[32];
+int memoria[100];  // Adicionando uma memória para armazenar dados
 int pc = 0;
 
 void imprimirEstado()
 {
     printf("PC: %d\n", pc);
+    for (int i = 0; i < 32; i++)
+    {
+        printf("$s%d: %d\n", i, registradores[i]);
+    }
+    printf("Memória:\n");
+    for (int i = 0; i < 100; i++)
+    {
+        printf("Mem[%d]: %d\n", i, memoria[i]);
+    }
 }
 
 void processarInstrucao(struct MipsR *r, struct MipsI *i, struct MipsJ *j)
@@ -56,16 +66,16 @@ void processarInstrucao(struct MipsR *r, struct MipsI *i, struct MipsJ *j)
     }
     else if (strcmp(r->opcode, "lw") == 0)
     {
-        registradores[r->rt] = registradores[r->rs] + i->endereco;
+        registradores[r->rt] = memoria[r->rs + i->endereco];
     }
     else if (strcmp(r->opcode, "sw") == 0)
     {
-        registradores[registradores[r->rs] + i->offset] = registradores[r->rt];
+        memoria[r->rs + i->offset] = registradores[r->rt];
     }
     else if (strcmp(j->opcode, "j") == 0)
     {
         pc = j->endereco;
-        return; 
+        return;
     }
 
     pc += 4;
@@ -73,10 +83,6 @@ void processarInstrucao(struct MipsR *r, struct MipsI *i, struct MipsJ *j)
 
 int main()
 {
-    struct MipsR r;
-    struct MipsI i;
-    struct MipsJ j;
-
     int cont;
     char escolha;
     char instrucao[100];
@@ -86,14 +92,24 @@ int main()
         registradores[cont] = 0;
     }
 
+    for (cont = 0; cont < 100; cont++)
+    {
+        memoria[cont] = 0;
+    }
+
     do
     {
         imprimirEstado();
 
-        printf("Digite a instrucao MIPS (por exemplo, ADD $s1, $s2, $s3): ");
+        printf("Digite a instrução MIPS (por exemplo, ADD $s1, $s2, $s3): ");
         fgets(instrucao, sizeof(instrucao), stdin);
+        
+        struct MipsR r = {0}; // Inicializa a estrutura com zeros
+        struct MipsI i = {0};
+        struct MipsJ j = {0};
 
-        if (sscanf(instrucao, "%s $s%d, $s%d, $s%d", r.opcode, &r.rs, &r.rt, &r.rd) == 4)
+
+        if (sscanf(instrucao, "%s $s%d, %d($s%d)", r.opcode, &r.rt, &i.offset, &r.rs) == 4)
         {
             processarInstrucao(&r, &i, &j);
         }
@@ -107,12 +123,12 @@ int main()
         }
         else
         {
-            printf("Erro ao ler a instrucao. Certifique-se de que a entrada está correta.\n");
+            printf("Erro ao ler a instrução. Certifique-se de que a entrada está correta.\n");
         }
 
         while (getchar() != '\n');
 
-        printf("Deseja adicionar mais instrucoes? (s para sim, qualquer outra tecla para sair): ");
+        printf("Deseja adicionar mais instruções? (s para sim, qualquer outra tecla para sair): ");
         scanf(" %c", &escolha);
 
     } while (escolha == 's' || escolha == 'S');
